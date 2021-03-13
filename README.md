@@ -3,6 +3,12 @@
 A simple tool written in `go` to unshorten short urls.
 Takes bunch of URLs and returns the unshortened URLs
 
+## TODO:
+
+- [ ] Clean up the code 
+- [ ] Proper flags for URL inputs (currently only takes input from STDIN)
+- [ ] Flag for output files to store the results
+
 ## Installation
 
 ```bash
