@@ -5,64 +5,44 @@ Takes bunch of URLs and returns the unshortened URLs
 
 ## TODO:
 
-- [ ] Clean up the code 
+- [ ] Code Cleanup 😓 
 - [x] Proper flags for URL inputs (currently only takes input from STDIN)
-- [ ] Flag for output files to store the results
-- [ ] output file support, currently only supports txt (csv,json)
+- [x] Flag for output files to store the results
+- [ ] Support for output in JSON,CSV and stuff (currently supports TXT)
+- [ ] `-ex` (exclude) flag to not include unreachable/invalid URLs in the output file
+
+more freatures if possible?
 
 ## Installation
 
 ```bash
-go get -u github.com/DarthCucumber/Tools/unwee
+go get -u github.com/DarthCucumber/unwee
 ```
 
 ## Usage
 
 ```
+ _  _ _ ___ __ _____ ___ 
+| || | ' \ V  V / -_) -_)
+ \_,_|_||_\_/\_/\___\___| v1.1.0
 usage: unwee [options...]
-
-options:
-
-[-l] (labelled) prints input url with corresponding result url
-
+options: 
+[-u] (url) takes in single URL as input and gives it's unshortened form.
+[-o] (output) takes in file name as input and saves result in the file
+[-f] (file) takes in file name containing list of shortened URLs
 [-h] (help) prints help menu
-
-[-m] (mute) mutes any error
-
+Example:
+- Single URL Input from stdin:
+	> echo "http://shorturl/xyz" | go run main.go
+- Input single url
+	> go run main.go -u http://shorturl/xyz
+- URL List file Input from stdin
+	> cat url_list.txt | go run main.go 
+- Input from file
+	> go run main.go -f url_list.txt
+- Setting output file to save results (default is saved at "output/<data_time>.txt")
+	> go run main.go -o outputfile.txaer
 ```
-
-## Example
-
-### Passing single URL
-```bash
-echo "http://vsurl.ta/aha8q12" | unwee -l
-```
-Result:
-```bash
-http://vsurl.ta/rndpth => http://veryshoturl.ta/random/path
-```
-
-### Passing multiple URLs
-let us have a text file `test_urls.txt` with list of short urls in it. Lets 					
-`unwee` them ; )
-```bash
-cat test_url.txt | unwee -l
-```
-and you know what the result will be.
-
-in addition user can pass options with `unwee` as per their needs.
-
-### `-l` or labelled   
-
-Allows user to print result in following format 
-`[short url] => [corresponding long url]`
-
-but sometimes one may need only the results so **excluding this flag** will print only results
-
-### `-m` or mute   
-
-Allows user to mute any URL related errors (404,403...)
-Without this flag any error gets printed in the screen.
 
 ### note
 There is a sample txt file in the repo with some shortened URLs in it for testing. So go ahead give it a try.
