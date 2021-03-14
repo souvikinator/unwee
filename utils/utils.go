@@ -25,7 +25,28 @@ options:
 [-o] (output) takes in file name as input and saves result in the file
 [-f] (file) takes in file name containing list of shortened URLs
 [-h] (help) prints help menu
-[-ex] (exclude) takes in status codes(404,403,...) separated by commas and doesn't include them in results
+
+Example:
+
+- Single URL Input from stdin:
+
+	> echo "http://shorturl/xyz" | go run main.go
+
+- Input single url
+
+	> go run main.go -u http://shorturl/xyz
+
+- URL List file Input from stdin
+
+	> cat url_list.txt | go run main.go 
+
+- Input from file
+
+	> go run main.go -f url_list.txt
+
+- Setting output file to save results (default is saved at "output/<data_time>.txt")
+
+	> go run main.go -o outputfile.txaer
 `
 fmt.Println(banner)
 os.Exit(0)
@@ -34,7 +55,7 @@ os.Exit(0)
 //check error
 func CheckErr(err error){
 	if err!=nil{
-		fmt.Println("[unwee] ",err)
+		fmt.Println("[ERR] ",err)
 		os.Exit(0)
 	}
 }
@@ -43,13 +64,13 @@ func CheckErr(err error){
 func GetFileData(filePath string)([]string){
 	var output []string
 	fl,err:=os.Open(filePath)
-	if !os.IsExist(err) {
+	if os.IsNotExist(err) {
 		fmt.Println("[ERR] ",err)
 		os.Exit(0)
 	}
  	defer fl.Close()
 	
-	reader := bufio.NewReader(os.Stdin)
+	reader := bufio.NewReader(fl)
 	for {
 		input, err := reader.ReadString('\n')
 		if err != nil && err == io.EOF {
@@ -57,7 +78,6 @@ func GetFileData(filePath string)([]string){
 		}
 		output = append(output, strings.Split(input, "\n")[0])
 	}
-
 	return output
 }
 
@@ -88,12 +108,25 @@ func GetStdin() []string {
 	return output
 }
 
+//writes slice of string line by line to a file
+func WriteToFile(resList []string,filePath string){
+	//if file doesn't exists then create one
+	outFile, err := os.Create(filePath)
+	CheckErr(err)
+	writer:=bufio.NewWriter(outFile)
+	for _,data := range resList{
+		_,_=writer.WriteString(data+"\n")
+	}
+	writer.Flush()
+	outFile.Close()
+}
+
 //return unshortened URL
-func Start(url string, wg *sync.WaitGroup){
+func Start(url string, wg *sync.WaitGroup, resultList *[]string){
 	defer wg.Done()
 	res,err:=http.Head(url)
-	if err!=nil{
-		fmt.Println(err)
-	}
-	fmt.Printf("[%s] %s => %s\n",res.Status,url,res.Request.URL.String())
+	CheckErr(err)
+	fmtRes:=fmt.Sprintf("\n%d  %s  %s",res.StatusCode,url,res.Request.URL.String())
+	*resultList=append(*resultList,fmtRes)
+	fmt.Println(fmtRes)
 }
