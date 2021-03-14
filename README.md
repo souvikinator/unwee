@@ -25,13 +25,18 @@ go get -u github.com/DarthCucumber/unwee
  _  _ _ ___ __ _____ ___ 
 | || | ' \ V  V / -_) -_)
  \_,_|_||_\_/\_/\___\___| v1.1.0
+ 
 usage: unwee [options...]
+
 options: 
+
 [-u] (url) takes in single URL as input and gives it's unshortened form.
 [-o] (output) takes in file name as input and saves result in the file
 [-f] (file) takes in file name containing list of shortened URLs
 [-h] (help) prints help menu
+
 Example:
+
 - Single URL Input from stdin:
 	> echo "http://shorturl/xyz" | go run main.go
 - Input single url
