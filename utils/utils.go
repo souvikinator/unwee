@@ -1,19 +1,18 @@
 package utils
 
 import (
-		"os"
-		"fmt"
-		"bufio"
-		"io"
-		"strings"
-		"sync"
-		"net/http"
+	"bufio"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+	"sync"
 )
 
-
 //displays usage details
-func DisplayHelp(){
-banner := `                          
+func DisplayHelp() {
+	banner := `                          
  _  _ _ ___ __ _____ ___ 
 | || | ' \ V  V / -_) -_)
  \_,_|_||_\_/\_/\___\___| v1.1.0
@@ -48,28 +47,28 @@ Example:
 
 	> go run main.go -o outputfile.txaer
 `
-fmt.Println(banner)
-os.Exit(0)
+	fmt.Println(banner)
+	os.Exit(0)
 }
 
 //check error
-func CheckErr(err error){
-	if err!=nil{
-		fmt.Println("[ERR] ",err)
+func CheckErr(err error) {
+	if err != nil {
+		fmt.Println("[ERR] ", err)
 		os.Exit(0)
 	}
 }
 
 //return slice of data in the file
-func GetFileData(filePath string)([]string){
+func GetFileData(filePath string) []string {
 	var output []string
-	fl,err:=os.Open(filePath)
+	fl, err := os.Open(filePath)
 	if os.IsNotExist(err) {
-		fmt.Println("[ERR] ",err)
+		fmt.Println("[ERR] ", err)
 		os.Exit(0)
 	}
- 	defer fl.Close()
-	
+	defer fl.Close()
+
 	reader := bufio.NewReader(fl)
 	for {
 		input, err := reader.ReadString('\n')
@@ -86,15 +85,15 @@ func isPiped() bool {
 	info, _ := os.Stdin.Stat()
 	if info.Mode()&os.ModeCharDevice == 0 {
 		return true
-	} 
-		return false
+	}
+	return false
 }
 
 //read input from stdin
 func GetStdin() []string {
 	var output []string
 	if !isPiped() {
-		return output 
+		return output
 	}
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -109,24 +108,29 @@ func GetStdin() []string {
 }
 
 //writes slice of string line by line to a file
-func WriteToFile(resList []string,filePath string){
+func WriteToFile(resList []string, filePath string) {
 	//if file doesn't exists then create one
 	outFile, err := os.Create(filePath)
 	CheckErr(err)
-	writer:=bufio.NewWriter(outFile)
-	for _,data := range resList{
-		_,_=writer.WriteString(data+"\n")
+	writer := bufio.NewWriter(outFile)
+	for _, data := range resList {
+		_, _ = writer.WriteString(data + "\n")
 	}
 	writer.Flush()
 	outFile.Close()
 }
 
 //return unshortened URL
-func Start(url string, wg *sync.WaitGroup, resultList *[]string){
+func Start(url string, wg *sync.WaitGroup, resultList *[]string, excludeList *[]int) {
 	defer wg.Done()
-	res,err:=http.Head(url)
+	res, err := http.Head(url)
 	CheckErr(err)
-	fmtRes:=fmt.Sprintf("\n%d  %s  %s",res.StatusCode,url,res.Request.URL.String())
-	*resultList=append(*resultList,fmtRes)
+	for _, code := range *excludeList {
+		if res.StatusCode == code {
+			return
+		}
+	}
+	fmtRes := fmt.Sprintf("\n%d  %s  %s", res.StatusCode, url, res.Request.URL.String())
+	*resultList = append(*resultList, fmtRes)
 	fmt.Println(fmtRes)
 }
