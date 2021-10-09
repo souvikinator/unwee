@@ -25,6 +25,8 @@ func main() {
 	urlFileFlag := flag.String("f", "", "(file) takes in file name containing list of shortened URLs")
 	helpFlag := flag.Bool("h", false, "(help) prints help menu")
 	excludeFlag := flag.String("ex", "", "(exclude) takes in comma seperated response code(403,404,...etc) as input and excludes the result corresponding to those response code")
+	outputFileExtFlag := flag.Bool("j", false, "(output file extension) true if you want it to save in json file else the result will be saved in a text file")
+
 	flag.Parse()
 
 	sessionConfig := config{}
@@ -66,10 +68,24 @@ func main() {
 
 	//TODO: add support to export in JSON,CSV and other
 	//after all the process is done
-	if len(*outputFileFlag) == 0 {
-		//generate one with name: date_time.txt
-		*outputFileFlag = "./output/" + time.Now().Format("01-02-2006_15:04:05") + ".txt"
+
+	// Type of file
+	fileExt := ".txt" // default value
+	/* Check if the FileExtFlag is true,
+	If it is then the fileExt value will be json else it will be default .txt */
+	if *outputFileExtFlag {
+		fileExt = ".json"
 	}
+	if len(*outputFileFlag) == 0 {
+		*outputFileFlag = "./output/" + time.Now().Format("01-02-2006_15:04:05") + fileExt
+	} else {
+		// If Json FileName is given as input
+		fileNameArr := strings.Split(*outputFileFlag, ".")
+		if fileNameArr[1] == "json" {
+			fileExt = ".json"
+		}
+	}
+
 	sessionConfig.outputFile = *outputFileFlag
 
 	sessionConfig.display()
@@ -85,9 +101,17 @@ func main() {
 	wg.Wait()
 
 	fmt.Printf("\n[*] Done")
-	fmt.Printf("\n[*] Saving results to file: %s\n", *outputFileFlag)
+	/*
+		if the fileExt is .txt, then call WriteToTextFile
+		else check whether the fileExt is .json, if it's true then call WriteToJsonFile
+	*/
+	fmt.Printf("\n[*] Saving results to text file: %s\n", *outputFileFlag)
+	if fileExt == ".txt" {
+		utils.WriteToTextFile(sessionConfig.resultList, *outputFileFlag)
+	} else if fileExt == ".json" {
+		utils.WriteToJsonFile(sessionConfig.resultList, *outputFileFlag)
+	}
 
-	utils.WriteToFile(sessionConfig.resultList, *outputFileFlag)
 	fmt.Printf("[*] Saved\n")
 }
 

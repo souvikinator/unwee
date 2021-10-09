@@ -2,8 +2,10 @@ package utils
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -49,6 +51,13 @@ Example:
 `
 	fmt.Println(banner)
 	os.Exit(0)
+}
+
+// Json Format keys of how the data will be shown in json file
+type jsonFormat struct {
+	StatusCode  string
+	ShortUrl    string
+	OriginalUrl string
 }
 
 //check error
@@ -108,7 +117,7 @@ func GetStdin() []string {
 }
 
 //writes slice of string line by line to a file
-func WriteToFile(resList []string, filePath string) {
+func WriteToTextFile(resList []string, filePath string) {
 	//if file doesn't exists then create one
 	outFile, err := os.Create(filePath)
 	CheckErr(err)
@@ -118,6 +127,27 @@ func WriteToFile(resList []string, filePath string) {
 	}
 	writer.Flush()
 	outFile.Close()
+}
+
+// Write to JSON File at once
+func WriteToJsonFile(resList []string, filePath string) {
+	// Array to store the struct object
+	var jsonArr []jsonFormat
+	// Iterating over the string Array
+	for _, u := range resList {
+		// Splitting the string with space to separate words
+		testArray := strings.Fields(u)
+		// Creating object of jsonFormat struct
+		elements := jsonFormat{
+			testArray[0],
+			testArray[1],
+			testArray[2],
+		}
+		jsonArr = append(jsonArr, elements)
+	}
+	f, _ := json.MarshalIndent(jsonArr, "", "  ")
+	// Writing to Json File
+	_ = ioutil.WriteFile(filePath, f, 0644)
 }
 
 //return unshortened URL
