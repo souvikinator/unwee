@@ -167,17 +167,13 @@ func Start(url string, wg *sync.WaitGroup, resultList *[]string, excludeList *[]
 
 	if res.StatusCode >= 200 && res.StatusCode < 300 {
 		statusCodeColor = color.New(color.FgGreen).SprintFunc()
-
 	} else if res.StatusCode >= 400 && res.StatusCode < 500 {
 		statusCodeColor = color.New(color.FgYellow).SprintFunc()
-
 	} else if res.StatusCode >= 500 && res.StatusCode < 600 {
 		statusCodeColor = color.New(color.FgRed).SprintFunc()
 	}
-	//coloredStatusCode := statusCodeColor(res.StatusCode)
 	blue := color.New(color.FgBlue).SprintFunc()
 
-	//fmtRes := fmt.Sprintf("\n%s  %s  %s", coloredStatusCode, url, res.Request.URL.String())
 	fmtRes := fmt.Sprintf("\n%s %s %s", statusCodeColor(res.StatusCode), blue(url), statusCodeColor(res.Request.URL.String()))
 	*resultList = append(*resultList, fmtRes)
 	fmt.Println(fmtRes)
