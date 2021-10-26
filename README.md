@@ -8,7 +8,7 @@ Takes bunch of URLs and returns the unshortened URLs
 - [ ] Code Cleanup 😓 
 - [x] Proper flags for URL inputs (currently only takes input from STDIN)
 - [x] Flag for output files to store the results
-- [ ] Support for output format(in JSON,CSV and stuff, currently supports TXT)
+- [x] Support for output format(in JSON, currently supports TXT)
 - [ ] `-ex` (exclude) flag to not include unreachable/invalid URLs in the output file
 
 more freatures if possible?
