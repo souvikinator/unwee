@@ -24,7 +24,7 @@ func main() {
 	outputFileFlag := flag.String("o", "", "(output) takes in file name as input and saves result in the file")
 	urlFileFlag := flag.String("f", "", "(file) takes in file name containing list of shortened URLs")
 	helpFlag := flag.Bool("h", false, "(help) prints help menu")
-	excludeFlag := flag.String("ex", "", "(exclude) takes in comma seperated response code(403,404,...etc) as input and excludes the result corresponding to those response code")
+	excludeFlag := flag.String("ex", "", "(exclude) takes in comma separated response code(403,404,...etc) as input and excludes the result corresponding to those response code")
 	outputFileExtFlag := flag.Bool("j", false, "(output file extension) true if you want it to save in json file else the result will be saved in a text file")
 
 	flag.Parse()
