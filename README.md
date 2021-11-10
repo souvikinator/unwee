@@ -16,7 +16,7 @@ more freatures if possible?
 ## Installation
 
 ```bash
-go get -u github.com/DarthCucumber/unwee
+go install github.com/DarthCucumber/unwee@latest
 ```
 
 ## Usage
